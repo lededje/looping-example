@@ -5,13 +5,13 @@ process.on("message", function(message) {
       process.send({
         type: "HEALTH_CHECK",
         mysql: true, // check connection to mysql is working
-        jobProcess: true // assume a response means this service is healthy
+        childProcess: true // assume a response means this service is healthy
         // ...other processes
       });
       return;
     }
     case "FETCH": {
-      Promise.all([timeout(), request()]).then(() => {
+      request().then(() => {
         process.send({
           type: "FETCH",
           success: true
@@ -24,14 +24,6 @@ process.on("message", function(message) {
     }
   }
 });
-
-const timeout = () =>
-  new Promise(resolve => {
-    setTimeout(() => {
-      console.log("Child process timeout complete");
-      resolve();
-    }, 3000);
-  });
 
 const request = () =>
   new Promise(resolve => {
